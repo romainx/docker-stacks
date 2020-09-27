@@ -71,7 +71,7 @@ dev/%: ARGS?=
 dev/%: DARGS?=
 dev/%: PORT?=8888
 dev/%: ## run a foreground container for a stack
-	docker run -it --rm -p $(PORT):8888 $(DARGS) $(OWNER)/$(notdir $@) $(ARGS)
+	docker run -it --rm -p $(PORT):8888 -e JUPYTER_ENABLE_LAB=yes $(DARGS) $(OWNER)/$(notdir $@) $(ARGS)
 
 dev-env: ## install libraries required to build docs and run tests
 	@pip install -r requirements-dev.txt
