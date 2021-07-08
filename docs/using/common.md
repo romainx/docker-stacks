@@ -32,10 +32,24 @@ the notebook server. You do so by passing arguments to the `docker run` command.
 * `-e CHOWN_EXTRA="<some dir>,<some other dir>"` - Instructs the startup script to change the owner and group of each comma-separated container directory to the current value of `$NB_UID` and `$NB_GID`. The change is **not** applied recursively by default. You can change modify the `chown` behavior by setting `CHOWN_EXTRA_OPTS` (e.g., `-e CHOWN_EXTRA_OPTS='-R'`).
 * `-e GRANT_SUDO=yes` - Instructs the startup script to grant the `NB_USER` user passwordless `sudo` capability. You do **not** need this option to allow the user to `conda` or `pip` install additional packages. This option is useful, however, when you wish to give `$NB_USER` the ability to install OS packages with `apt` or modify other root-owned files in the container. For this option to take effect, you must run the container with `--user root`. (The `start-notebook.sh` script will `su $NB_USER` after adding `$NB_USER` to sudoers.) **You should only enable `sudo` if you trust the user or if the container is running on an isolated host.**
 * `-e GEN_CERT=yes` - Instructs the startup script to generates a self-signed SSL certificate and configure Jupyter Notebook to use it to accept encrypted HTTPS connections.
-* `-e JUPYTER_ENABLE_LAB=yes` - Instructs the startup script to run `jupyter lab` instead of the default `jupyter notebook` command. Useful in container orchestration environments where setting environment variables is easier than change command line parameters.
+* `-e JUPYTER_ENABLE_NB=yes` - Instructs the startup script to run `jupyter notebook` instead of the default `jupyter lab` command. Useful in container orchestration environments where setting environment variables is easier than change command line parameters.
+* `-e JUPYTER_ENABLE_LAB=yes` - Instructs the startup script to run `jupyter lab` (pre JupyterLab 3.0 transition only, see notice below).
 * `-e RESTARTABLE=yes` - Runs Jupyter in a loop so that quitting Jupyter does not cause the container to exit.  This may be useful when you need to install extensions that require restarting Jupyter.
 * `-v /some/host/folder/for/work:/home/jovyan/work` - Mounts a host machine directory as folder in the container. Useful when you want to preserve notebooks and other work even after the container is destroyed. **You must grant the within-container notebook user or group (`NB_UID` or `NB_GID`) write access to the host directory (e.g., `sudo chown 1000 /some/host/folder/for/work`).**
 * `--user 5000 --group-add users` - Launches the container with a specific user ID and adds that user to the `users` group so that it can modify files in the default home directory and `/opt/conda`. You can use these arguments as alternatives to setting `$NB_UID` and `$NB_GID`.
+
+``` important:: 
+
+    During the `transition to JupyterLab 3.0`__, the default behaviour of ``start-notebook.sh`` has
+    changed:
+    The startup script will now run ``jupyter lab`` by default instead of ``jupyter notebook``.
+    Previously, the ``JUPYTER_ENABLE_LAB`` argument was required to use JupyterLab. This is no
+    longer necessary. You may force the legacy Jupyter Notebook by adding the new
+    ``-e JUPYTER_ENABLE_NB=yes`` argument.
+
+    .. __: https://github.com/jupyter/docker-stacks/issues/1207
+
+```
 
 ## Startup Hooks
 

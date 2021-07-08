@@ -20,6 +20,7 @@
 # import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
+from recommonmark.transform import AutoStructify
 
 # -- General configuration ------------------------------------------------
 
@@ -31,6 +32,7 @@ needs_sphinx = '1.4'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'recommonmark'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -47,7 +49,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'docker-stacks'
-copyright = '2018- Project Jupyter'
+copyright = '2018-2021 Project Jupyter'
 author = 'Project Jupyter'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -80,6 +82,7 @@ todo_include_todos = False
 
 # -- Source -------------------------------------------------------------
 
+# for Sphinx-1.3
 source_parsers = {
     '.md': 'recommonmark.parser.CommonMarkParser',
 }
@@ -195,3 +198,8 @@ linkcheck_anchors = False
 
 gettext_uuid = True
 locale_dirs = ['locale/']
+
+
+def setup(app):
+    app.add_config_value('recommonmark_config', {'enable_eval_rst': True}, True)
+    app.add_transform(AutoStructify)
